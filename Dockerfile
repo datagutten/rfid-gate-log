@@ -11,6 +11,7 @@ FROM python:3.14-slim
 COPY --from=builder /app/wheels /wheels
 
 RUN pip install --no-cache /wheels/*
+RUN apt-get update && apt-get -y install default-libmysqlclient-dev
 
 WORKDIR /app
 COPY rfid_gate_log .
