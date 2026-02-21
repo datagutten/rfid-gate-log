@@ -1,0 +1,17 @@
+apiVersion: 1
+datasources:
+  - uid: "gate-log"
+    orgId: 1
+    name: "gate-log"
+    type: "yesoreyeram-infinity-datasource"
+    url: ""
+    basicAuth: false
+    basicAuthUser: ""
+    isDefault: false
+    jsonData:
+      allowedHosts:
+        - 'http://gate-log'
+      httpHeaderName1: "Authorization"
+      oauthPassThru: false
+      auth_method: "none"
+    readOnly: false

@@ -1,0 +1,8 @@
+.idea
+data
+parsed_data
+.env
+*.log
+*.lock
+
+docker-compose.override.yml

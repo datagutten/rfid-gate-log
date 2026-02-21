@@ -1,0 +1,49 @@
+services:
+  gate-api:
+    build: .
+    command: gunicorn -c gunicorn.conf_api.py
+
+  gate-log:
+    build: .
+    volumes:
+    - ./data:/app/data
+    - ./parsed_data:/app/parsed_data
+    env_file:
+    - .env
+    environment:
+      FEIG_API_URL: http://gate-api
+    depends_on:
+    - gate-api
+
+  nginx:
+    build:
+      context: nginx
+      additional_contexts:
+        ghcr.io/datagutten/rfid-gate-log: service:gate-log
+    restart: unless-stopped
+    depends_on:
+    - gate-log
+    - grafana
+    ports:
+    - "8086:80"
+
+  grafana:
+    image: grafana/grafana
+    restart: unless-stopped
+    depends_on:
+    - gate-log
+    volumes:
+    - grafana-data:/var/lib/grafana
+    - ./grafana/provisioning:/var/lib/grafana/provisioning
+    environment:
+    - GF_USERS_ALLOW_SIGN_UP=false
+    - GF_SECURITY_ADMIN_USER=admin
+    - GF_SECURITY_ADMIN_PASSWORD=${GF_SECURITY_ADMIN_PASSWORD}
+    - GF_SERVER_ROOT_URL=/grafana
+    - GF_SERVER_SERVE_FROM_SUB_PATH=true
+    - GF_PATHS_PROVISIONING=/var/lib/grafana/provisioning
+    - GF_PLUGINS_PREINSTALL=yesoreyeram-infinity-datasource
+    - TZ=${TIME_ZONE}
+
+volumes:
+  grafana-data:
