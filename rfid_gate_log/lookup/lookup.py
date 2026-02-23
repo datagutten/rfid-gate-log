@@ -1,6 +1,6 @@
 import requests
 
-from sip import SipHTTP
+from .sip import SipHTTP
 
 
 class LMSLookup:
