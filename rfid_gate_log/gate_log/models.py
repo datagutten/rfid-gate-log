@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 
 
 class Branch(models.Model):
@@ -58,7 +59,7 @@ class PeopleCounter(models.Model):
 
 class PeopleCounterTime(models.Model):
     gate = models.ForeignKey(Gate, on_delete=models.CASCADE, related_name='people_count_time')
-    time = models.DateTimeField(auto_now_add=True)
+    time = models.DateTimeField(default=timezone.now)
     people_in = models.IntegerField()
     people_out = models.IntegerField()
 
