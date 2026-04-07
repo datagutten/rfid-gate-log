@@ -19,6 +19,11 @@ def branches(request):
     return JsonResponse(list(models.Branch.objects.all().values_list('name', flat=True)), safe=False)
 
 
+def gates(request):
+    branch = request.GET.get('branch')
+    return JsonResponse(list(models.Branch.objects.get(name=branch).gates.values_list('name', flat=True)), safe=False)
+
+
 def peoplecount(request):
     time_from, time_to = _grafana_time(request)
     branch = request.GET.get('branch')
