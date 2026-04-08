@@ -1,10 +1,10 @@
 import datetime
 from zoneinfo import ZoneInfo
 
+import django.db.models
 from django.http import JsonResponse
-from django.shortcuts import render
 from gate_log import models
-from django.db.models import Sum
+from django.db.models import Sum, Min, Max
 from django.conf import settings
 
 
@@ -22,6 +22,12 @@ def branches(request):
 def gates(request):
     branch = request.GET.get('branch')
     return JsonResponse(list(models.Branch.objects.get(name=branch).gates.values_list('name', flat=True)), safe=False)
+
+
+def _calculate_people_count(queryset: django.db.models.QuerySet, field: str) -> int:
+    min_count = queryset.aggregate(Min(field))
+    max_count = queryset.aggregate(Max(field))
+    return max_count[f'{field}__max'] - min_count[f'{field}__min']
 
 
 def peoplecount(request):
@@ -44,6 +50,40 @@ def peoplecount_sum(request):
         counts[gate.name] = gate_sum['people_in__sum']
 
     return JsonResponse(counts)
+
+
+def people_count_day(request):
+    time_from, time_to = _grafana_time(request)
+    branch = request.GET.get('branch')
+    gate = request.GET.get('gate')
+    data = []
+
+    gate = models.Gate.objects.get(branch__name=branch, name=gate)
+    entries = gate.people_count_time.filter(time__range=(time_from, time_to))
+    for day in entries.dates('time', 'day'):
+        counts = gate.people_count_time.filter(time__date=day)
+        in_count = _calculate_people_count(counts, 'people_in')
+        out_count = _calculate_people_count(counts, 'people_out')
+
+        data.append({'date': day.isoformat(), 'in': in_count, 'out': out_count})
+    return JsonResponse(data, safe=False)
+
+
+def people_count_hour(request):
+    time_from, time_to = _grafana_time(request)
+    branch = request.GET.get('branch')
+    gate = request.GET.get('gate')
+    data = []
+
+    gate = models.Gate.objects.get(branch__name=branch, name=gate)
+    entries = gate.people_count_time.filter(time__range=(time_from, time_to))
+    for day in entries.datetimes('time', 'hour'):
+        counts = gate.people_count_time.filter(time__date=day.date(), time__hour=day.hour)
+        in_count = _calculate_people_count(counts, 'people_in')
+        out_count = _calculate_people_count(counts, 'people_out')
+        data.append({'date': day.isoformat(), 'in': in_count, 'out': out_count})
+
+    return JsonResponse(data, safe=False)
 
 
 def alarms(request):
