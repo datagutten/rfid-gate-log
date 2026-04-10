@@ -55,6 +55,7 @@ class PeopleCounter(models.Model):
 
     class Meta:
         unique_together = ('gate', 'date')
+        verbose_name = 'People count per day'
 
 
 class PeopleCounterTime(models.Model):
@@ -65,3 +66,4 @@ class PeopleCounterTime(models.Model):
 
     class Meta:
         unique_together = ('gate', 'time')
+        verbose_name = 'People count'

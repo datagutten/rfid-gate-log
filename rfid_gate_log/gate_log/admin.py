@@ -29,3 +29,9 @@ class LogEntryAdmin(admin.ModelAdmin):
 class PeopleCounterAdmin(admin.ModelAdmin):
     list_display = ['gate', 'time', 'people_in', 'people_out']
     list_filter = ['gate', 'time']
+
+
+@admin.register(models.PeopleCounter)
+class PeopleCounterDayAdmin(admin.ModelAdmin):
+    list_display = ['gate', 'date', 'people_in', 'people_out']
+    list_filter = ['gate', 'date']
