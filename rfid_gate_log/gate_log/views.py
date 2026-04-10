@@ -40,8 +40,7 @@ def peoplecount(request):
 def peoplecount_sum(request):
     time_from, time_to = _grafana_time(request)
     branch = request.GET.get('branch')
-    # records = models.PeopleCounter.objects.filter(date__gte=time_from, date__lte=time_to, gate__branch__name=branch)
-    records = models.PeopleCounterTime.objects.filter(time__gte=time_from, time__lte=time_to, gate__branch__name=branch)
+    records = models.PeopleCounter.objects.filter(date__gte=time_from, date__lte=time_to, gate__branch__name=branch)
     sum_in = records.aggregate(Sum('people_in'))
     counts = {'total': sum_in['people_in__sum']}
     for gate in models.Gate.objects.filter(branch__name=branch):
