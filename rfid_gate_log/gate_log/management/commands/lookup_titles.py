@@ -1,3 +1,4 @@
+import requests
 from django.core.management.base import BaseCommand
 
 from gate_log import models
@@ -22,7 +23,11 @@ class Command(BaseCommand):
             try:
                 title_obj = models.Title.objects.get(tag=entry.tag)
             except models.Title.DoesNotExist:
-                response_tag = lms[branch_id].query(entry.tag)
+                try:
+                    response_tag = lms[branch_id].query(entry.tag)
+                except requests.exceptions.RequestException as e:
+                    print('Error looking up tag %s: %s' % (entry.tag, e))
+                    continue
                 if response_tag == 'Unknown':
                     print('Unknown tag %s' % entry.tag)
                     continue
