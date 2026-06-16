@@ -37,7 +37,7 @@ class LogEntry(models.Model):
     gate = models.ForeignKey(Gate, on_delete=models.CASCADE, related_name='logs')
     time = models.DateTimeField()
     tag = models.CharField('Tag', max_length=100)
-    title = models.ForeignKey(Title, on_delete=models.CASCADE, null=True, related_name='logs')
+    title = models.ForeignKey(Title, on_delete=models.CASCADE, null=True, blank=True, related_name='logs')
 
     class Meta:
         unique_together = ('gate', 'time', 'tag')
