@@ -25,6 +25,12 @@ class LogEntryAdmin(admin.ModelAdmin):
     list_filter = ['gate', 'time']
 
 
+@admin.register(models.BufferRaw)
+class BufferRawAdmin(admin.ModelAdmin):
+    list_display = ['gate', 'time']
+    list_filter = ['gate', 'time']
+
+
 @admin.register(models.PeopleCounterTime)
 class PeopleCounterAdmin(admin.ModelAdmin):
     list_display = ['gate', 'time', 'people_in', 'people_out']
