@@ -47,6 +47,13 @@ class LogEntry(models.Model):
         return '%s %s %s' % (self.gate, self.time, self.title or self.tag)
 
 
+class BufferRaw(models.Model):
+    gate = models.ForeignKey(Gate, on_delete=models.CASCADE, related_name='raw_data')
+    time = models.DateTimeField(default=timezone.now)
+    data = models.BinaryField()
+    tags = models.ManyToManyField(LogEntry, related_name='raw_data')
+
+
 class PeopleCounter(models.Model):
     gate = models.ForeignKey(Gate, on_delete=models.CASCADE, related_name='people_count')
     date = models.DateField()

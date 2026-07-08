@@ -1,10 +1,8 @@
-import json
+import base64
 import os
 from datetime import datetime
 from json import JSONDecodeError
-from pathlib import Path
 
-import django.db
 import requests
 from django.core.management.base import BaseCommand
 
@@ -35,7 +33,11 @@ class Command(BaseCommand):
             if 'tags' not in data:
                 print('No tags in buffer for gate %s' % gate)
                 continue
+            raw_data = base64.b64decode(data['raw'])
+            models.BufferRaw.objects.create(gate=gate, time=datetime.now(), data=raw_data)
             for tag in data['tags']:
+                if not tag:
+                    continue
                 print(tag)
                 models.LogEntry.objects.create(gate=gate, time=datetime.now(), tag=tag)
             response = requests.get(
