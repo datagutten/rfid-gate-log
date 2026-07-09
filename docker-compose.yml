@@ -10,8 +10,6 @@ services:
     - ./parsed_data:/app/parsed_data
     env_file:
     - .env
-    environment:
-      FEIG_API_URL: http://gate-api
     depends_on:
     - gate-api
 

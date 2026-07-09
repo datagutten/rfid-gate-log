@@ -17,6 +17,8 @@ WORKDIR /app
 COPY rfid_gate_log .
 COPY gunicorn.conf.py .
 COPY gunicorn.conf_api.py .
+
+ENV FEIG_API_URL=http://gate-api
 CMD gunicorn
 
 EXPOSE 80
