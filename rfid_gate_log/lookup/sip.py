@@ -1,4 +1,4 @@
-import re
+from xml.etree import ElementTree
 
 import requests
 from Sip2.sip2 import Sip2
@@ -19,15 +19,16 @@ class SipHTTP(Sip2):
         self.session.headers['Content-Type'] = 'application/xml'
 
     def get_response(self, request):
-        xml = '''<?xml version="1.0" encoding="UTF-8" ?>
+        query_xml = '''<?xml version="1.0" encoding="UTF-8" ?>
 <ns1:sip login="%s" password="%s" xsi:schemaLocation="http://axiell.com/Schema/sip.xsd sip.xsd" xmlns:ns1="http://axiell.com/Schema/sip.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" >
 <request>%s</request>
 </ns1:sip>''' % (self.username, self.password, request)
 
-        response = self.session.post(self.url, data=xml)
+        response = self.session.post(self.url, data=query_xml)
         response.raise_for_status()
-        matches = re.search(r'<response>(.+)</response>', response.text)
-        return matches.group(1)
+        tree = ElementTree.fromstring(response.content)
+        response_xml = tree.find('response')
+        return response_xml.text
 
     def sip_login_request(self, loginUserId, loginPassword):
         """ Generate login (code 93) request messages in sip2 format
