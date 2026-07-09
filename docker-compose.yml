@@ -1,19 +1,20 @@
 services:
   gate-api:
-    build: .
-    command: gunicorn -c gunicorn.conf_api.py
+    image: datagutten/feig-py:api-latest
+    pull_policy: always
+    volumes:
+    - ./gate_data:/data
 
   gate-log:
-    build: .
-    volumes:
-    - ./data:/app/data
-    - ./parsed_data:/app/parsed_data
+    image: datagutten/rfid-gate-log:backend
+    pull_policy: always
     env_file:
     - .env
     depends_on:
     - gate-api
 
   nginx:
+    image: datagutten/rfid-gate-log:nginx
     build:
       context: nginx
       additional_contexts:
@@ -22,8 +23,6 @@ services:
     depends_on:
     - gate-log
     - grafana
-    ports:
-    - "8086:80"
 
   grafana:
     image: grafana/grafana

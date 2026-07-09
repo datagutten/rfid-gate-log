@@ -16,7 +16,6 @@ RUN apt-get update && apt-get -y install default-libmysqlclient-dev
 WORKDIR /app
 COPY rfid_gate_log .
 COPY gunicorn.conf.py .
-COPY gunicorn.conf_api.py .
 
 ENV FEIG_API_URL=http://gate-api
 CMD gunicorn
