@@ -1,3 +1,5 @@
+import base64
+
 from django.db import models
 from django.utils import timezone
 
@@ -52,6 +54,10 @@ class BufferRaw(models.Model):
     time = models.DateTimeField(default=timezone.now)
     data = models.BinaryField()
     tags = models.ManyToManyField(LogEntry, related_name='raw_data')
+
+    @property
+    def base64(self):
+        return base64.b64encode(self.data).decode()
 
 
 class PeopleCounter(models.Model):

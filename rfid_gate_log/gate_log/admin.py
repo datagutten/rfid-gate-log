@@ -29,7 +29,7 @@ class LogEntryAdmin(admin.ModelAdmin):
 class BufferRawAdmin(admin.ModelAdmin):
     list_display = ['gate', 'time']
     list_filter = ['gate', 'time']
-
+    readonly_fields = ['base64']
 
 @admin.register(models.PeopleCounterTime)
 class PeopleCounterAdmin(admin.ModelAdmin):
