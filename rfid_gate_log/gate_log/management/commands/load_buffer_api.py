@@ -34,12 +34,13 @@ class Command(BaseCommand):
                 print('No tags in buffer for gate %s' % gate)
                 continue
             raw_data = base64.b64decode(data['raw'])
-            models.BufferRaw.objects.create(gate=gate, time=datetime.now(), data=raw_data)
+            raw_obj = models.BufferRaw.objects.create(gate=gate, time=datetime.now(), data=raw_data)
             for tag in data['tags']:
                 if not tag:
                     continue
                 print(tag)
                 models.LogEntry.objects.create(gate=gate, time=datetime.now(), tag=tag)
+                raw_obj.tags.add(tag)
             response = requests.get(
                 '%s/buffer_clear?gate=%s' % (os.getenv('FEIG_API_URL', 'http://http-proxy'), gate.ip))
             print('Clear: ', response.json())
