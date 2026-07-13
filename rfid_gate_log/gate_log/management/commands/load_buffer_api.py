@@ -39,8 +39,8 @@ class Command(BaseCommand):
                 if not tag:
                     continue
                 print(tag)
-                models.LogEntry.objects.create(gate=gate, time=datetime.now(), tag=tag)
-                raw_obj.tags.add(tag)
+                log_obj = models.LogEntry.objects.create(gate=gate, time=datetime.now(), tag=tag)
+                raw_obj.tags.add(log_obj)
             response = requests.get(
                 '%s/buffer_clear?gate=%s' % (os.getenv('FEIG_API_URL', 'http://http-proxy'), gate.ip))
             print('Clear: ', response.json())
