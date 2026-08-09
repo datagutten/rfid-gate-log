@@ -19,6 +19,15 @@ class Command(BaseCommand):
     #     parser.add_argument('gate', nargs='?', type=str)
 
     def handle(self, *args, **options):
+        logging.basicConfig(
+            filename='/var/log/gate/load_buffer.log',
+            level=logging.DEBUG,
+            filemode="a",
+            format="{asctime} - {levelname} - {message}",
+            style="{",
+            datefmt="%Y-%m-%d %H:%M",
+        )
+
         for gate in models.Gate.objects.exclude(ip=None):
             logger.info('Saving tags from %s:', gate)
             response = requests.get('%s/buffer?gate=%s' % (os.getenv('FEIG_API_URL', 'http://gate-api'), gate.ip))
