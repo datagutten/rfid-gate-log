@@ -1,4 +1,5 @@
 import base64
+import logging
 import os
 from datetime import datetime
 from json import JSONDecodeError
@@ -7,6 +8,8 @@ import requests
 from django.core.management.base import BaseCommand
 
 from gate_log import models
+
+logger = logging.getLogger(__name__)
 
 
 class Command(BaseCommand):
@@ -17,7 +20,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         for gate in models.Gate.objects.exclude(ip=None):
-            print('Saving tags from %s:' % gate)
+            logger.info('Saving tags from %s:', gate)
             response = requests.get('%s/buffer?gate=%s' % (os.getenv('FEIG_API_URL', 'http://gate-api'), gate.ip))
             if not response.ok:
                 try:
@@ -31,7 +34,7 @@ class Command(BaseCommand):
             data = response.json()
             print('Data: ', data)
             if 'tags' not in data:
-                print('No tags in buffer for gate %s' % gate)
+                logger.info('No tags in buffer for gate %s', gate)
                 continue
             raw_data = base64.b64decode(data['raw'])
             raw_obj = models.BufferRaw.objects.create(gate=gate, time=datetime.now(), data=raw_data)
@@ -43,4 +46,4 @@ class Command(BaseCommand):
                 raw_obj.tags.add(log_obj)
             response = requests.get(
                 '%s/buffer_clear?gate=%s' % (os.getenv('FEIG_API_URL', 'http://http-proxy'), gate.ip))
-            print('Clear: ', response.json())
+            logger.info('Clear: %s', response.text)
