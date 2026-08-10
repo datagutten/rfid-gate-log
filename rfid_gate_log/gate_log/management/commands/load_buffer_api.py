@@ -23,7 +23,7 @@ class Command(BaseCommand):
             filename='/var/log/gate/load_buffer.log',
             level=logging.DEBUG,
             filemode="a",
-            format="{asctime} - {levelname} - {message}",
+            format="{asctime} - {levelname}\t{name}\t{message}",
             style="{",
             datefmt="%Y-%m-%d %H:%M",
         )
@@ -35,6 +35,7 @@ class Command(BaseCommand):
                 try:
                     if 'error' in response.json():
                         print(response.json()['error'])
+                        logger.error(response.json()['error'])
                         continue
                 except JSONDecodeError:
                     pass
@@ -50,7 +51,7 @@ class Command(BaseCommand):
             for tag in data['tags']:
                 if not tag:
                     continue
-                print(tag)
+                logger.debug('Found tag: %s', tag)
                 log_obj = models.LogEntry.objects.create(gate=gate, time=datetime.now(), tag=tag)
                 raw_obj.tags.add(log_obj)
             if len(data['tags']) > 0:
