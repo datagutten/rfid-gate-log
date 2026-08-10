@@ -14,7 +14,7 @@ dependencies = [
     "python-dotenv (>=1.2.1,<2.0.0)",
     "mysqlclient (>=2.2.7,<3.0.0)",
     "psycopg2-binary (>=2.9.11,<3.0.0)",
-    "gunicorn (>=23.0.0,<24.0.0)",
+    "gunicorn (>=23.0.0,<27.0.0)",
     "typenv (>=0.2.0,<0.3.0)",
 ]
 
