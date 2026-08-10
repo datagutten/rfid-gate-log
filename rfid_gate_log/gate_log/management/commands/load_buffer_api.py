@@ -53,6 +53,7 @@ class Command(BaseCommand):
                 print(tag)
                 log_obj = models.LogEntry.objects.create(gate=gate, time=datetime.now(), tag=tag)
                 raw_obj.tags.add(log_obj)
-            response = requests.get(
-                '%s/buffer_clear?gate=%s' % (os.getenv('FEIG_API_URL', 'http://http-proxy'), gate.ip))
-            logger.info('Clear: %s', response.text)
+            if len(data['tags']) > 0:
+                response = requests.get(
+                    '%s/buffer_clear?gate=%s' % (os.getenv('FEIG_API_URL', 'http://http-proxy'), gate.ip))
+                logger.info('%d tags found, clearing buffer: %s', len(data['tags']), response.text)
