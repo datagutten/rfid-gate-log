@@ -80,6 +80,9 @@ class PeopleCounterTime(models.Model):
     people_in = models.IntegerField()
     people_out = models.IntegerField()
 
+    def total(self):
+        return self.people_in + self.people_out
+
     class Meta:
         unique_together = ('gate', 'time')
         verbose_name = 'People count'
