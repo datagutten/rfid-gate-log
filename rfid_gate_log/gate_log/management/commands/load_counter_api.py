@@ -15,6 +15,8 @@ class Command(BaseCommand):
             if not response.ok:
                 continue
             counter = response.json()
+            print(gate)
+            print(counter)
             counter_obj = models.PeopleCounterTime.objects.create(gate=gate, people_in=counter['in'],
                                                                   people_out=counter['out'])
             counter_obj.save()
