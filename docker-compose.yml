@@ -15,6 +15,7 @@ services:
 
   nginx:
     image: datagutten/rfid-gate-log:nginx
+    pull_policy: always
     build:
       context: nginx
       additional_contexts:
