@@ -1,12 +1,15 @@
 services:
   gate-api:
     image: datagutten/feig-py:api-latest
+    restart: unless-stopped
     pull_policy: always
     volumes:
     - ./gate_data:/data
 
+
   gate-log:
     image: datagutten/rfid-gate-log:backend
+    restart: unless-stopped
     pull_policy: always
     env_file:
     - .env
@@ -15,12 +18,12 @@ services:
 
   nginx:
     image: datagutten/rfid-gate-log:nginx
+    restart: unless-stopped
     pull_policy: always
     build:
       context: nginx
       additional_contexts:
         ghcr.io/datagutten/rfid-gate-log: service:gate-log
-    restart: unless-stopped
     depends_on:
     - gate-log
     - grafana
