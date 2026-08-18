@@ -40,6 +40,7 @@ class LogEntry(models.Model):
     time = models.DateTimeField()
     tag = models.CharField('Tag', max_length=100)
     title = models.ForeignKey(Title, on_delete=models.SET_NULL, null=True, blank=True, related_name='logs')
+    title_unknown = models.BooleanField(default=False)
 
     class Meta:
         unique_together = ('gate', 'time', 'tag')

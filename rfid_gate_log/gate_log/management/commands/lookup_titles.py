@@ -13,7 +13,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         lms = {}
-        for entry in models.LogEntry.objects.filter(title__isnull=True):
+        for entry in models.LogEntry.objects.filter(title__isnull=True, title_unknown=False):
             branch_id = entry.gate.branch_id
             branch = entry.gate.branch
             if entry.gate.branch_id not in lms:
@@ -25,11 +25,13 @@ class Command(BaseCommand):
             except models.Title.DoesNotExist:
                 try:
                     response_tag = lms[branch_id].query(entry.tag)
-                except requests.exceptions.RequestException as e:
+                except (requests.exceptions.RequestException, SyntaxError) as e:
                     print('Error looking up tag %s: %s' % (entry.tag, e))
                     continue
                 if response_tag == 'Unknown':
                     print('Unknown tag %s' % entry.tag)
+                    entry.title_unknown = True
+                    entry.save()
                     continue
                 title_obj = models.Title(tag=entry.tag, title=response_tag)
                 title_obj.save()
