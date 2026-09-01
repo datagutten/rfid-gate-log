@@ -29,6 +29,7 @@ class Command(BaseCommand):
         )
 
         for gate in models.Gate.objects.exclude(ip=None):
+            print(gate)
             logger.info('Saving tags from %s:', gate)
             response = requests.get('%s/buffer?gate=%s' % (os.getenv('FEIG_API_URL', 'http://gate-api'), gate.ip))
             if not response.ok:
